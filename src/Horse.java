@@ -1,37 +1,46 @@
-public class Horse extends ChessPiece{
+public class Horse extends ChessPiece {
     public Horse(String color) {
         super(color);
     }
 
     @Override
     public String getColor() {
-        return color;
+        return this.color;
     }
 
     @Override
     public boolean canMoveToPosition(ChessBoard chessBoard, int line, int column, int toLine, int toColumn) {
-        if (checkPos(toLine) && checkPos(toColumn)) {
-            if (line == toLine || column == toColumn)
-                return false;
-            if (chessBoard.board[toLine][toColumn].color.equals(this.color)) {
-                return false;
-            }
-            if ((Math.abs(toLine - line) == 1 && Math.abs(toColumn - column) == 2))
-                return true;
+        if (checkPos(line) && checkPos(column) && checkPos(toLine) && checkPos(toColumn)) {
+            if (line != toLine && column != toColumn && (chessBoard.board[toLine][toColumn] == null || // check that horse
+                    !chessBoard.board[toLine][toColumn].color.equals(this.color)) &&                   // can't move out
+                    chessBoard.board[line][column] != null) {                                          // position is empty
+                if (!chessBoard.board[line][column].equals(this)) {
+                    return false;
+                }
 
-            return Math.abs(toLine - line) == 2 && Math.abs(toLine - line) == 1;
-        }
+                // all positions for horse
+                int[][] positions = new int[][]{
+                        {line - 2, column - 1}, {line - 2, column + 1},
+                        {line + 2, column - 1}, {line + 2, column + 1},
+                        {line - 1, column - 2}, {line - 1, column + 2},
+                        {line + 1, column - 2}, {line + 1, column + 2}};
+
+                for (int i = 0; i < positions.length; i++) {
+                    if (positions[i][0] == toLine && positions[i][1] == toColumn)
+                        return true;  // check that toLine and toColumn
+                }                                                                               // in positions
+            }
+        } else return false;
         return false;
     }
-
 
     @Override
     public String getSymbol() {
         return "H";
     }
 
-    public boolean checkPos(int pos) {
-        return pos >= 0 && pos <= 7;
+    public boolean checkPos(int pos) {   // check that our position is correct
+        if (pos >= 0 && pos <= 7) return true;
+        else return false;
     }
-
 }
